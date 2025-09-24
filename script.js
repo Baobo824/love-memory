@@ -7,7 +7,9 @@ let isPlayingMusic = false;
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
     startLoveCounter();
-    // 不再加载本地存储的数据，使用固定内容
+    updateMeetingDateDisplay(); // 确保相遇日期正确显示
+    checkAudioStatus(); // 检查音频加载状态
+    // 使用固定内容，确保所有访问者看到相同内容
 });
 
 // 初始化页面
@@ -70,9 +72,14 @@ function updateMeetingDateDisplay() {
     }
 }
 
+// 相遇日期显示将在主初始化函数中处理
+
 // 更新爱情计数器
 function updateLoveCounter() {
+    console.log('计时器更新中...', meetingDate);
+    
     if (!meetingDate) {
+        console.log('没有设置相遇日期');
         document.getElementById('days-count').textContent = '∞';
         document.getElementById('hours-count').textContent = '∞';
         document.getElementById('minutes-count').textContent = '∞';
@@ -86,10 +93,12 @@ function updateLoveCounter() {
     const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
     
-    // 添加数字滚动动画效果
-    animateNumber('days-count', days);
-    animateNumber('hours-count', hours);
-    animateNumber('minutes-count', minutes);
+    console.log(`计算结果: ${days}天 ${hours}小时 ${minutes}分钟`);
+    
+    // 直接设置文本，不使用动画
+    document.getElementById('days-count').textContent = days;
+    document.getElementById('hours-count').textContent = hours;
+    document.getElementById('minutes-count').textContent = minutes;
 }
 
 // 开始爱情计数器
@@ -258,19 +267,57 @@ function toggleMusic() {
         musicBtn.textContent = '🎵';
         musicBtn.title = '播放背景音乐';
         isPlayingMusic = false;
+        showNotification('背景音乐已暂停 🎵');
     } else {
+        // 设置音量
+        audio.volume = 0.3; // 设置较低音量，避免过于突兀
+        
         // 由于浏览器的自动播放限制，需要用户交互才能播放音乐
         audio.play().then(() => {
             musicBtn.textContent = '🎶';
             musicBtn.title = '暂停背景音乐';
             isPlayingMusic = true;
+            showNotification('背景音乐已开始播放 🎶');
         }).catch(error => {
             console.log('音乐播放失败:', error);
-            showNotification('请手动播放背景音乐，或添加本地音乐文件');
+            showNotification('请上传音乐文件到项目中，或者检查网络连接 🎵');
         });
     }
+}
+
+// 音频加载状态检查
+function checkAudioStatus() {
+    const audio = document.getElementById('background-music');
     
-    saveToLocalStorage('musicPlaying', isPlayingMusic);
+    audio.addEventListener('loadstart', () => {
+        console.log('开始加载音频文件...');
+    });
+    
+    audio.addEventListener('canplay', () => {
+        console.log('音频文件可以播放');
+        showNotification('音乐已加载完成，点击 🎵 按钮开始播放');
+    });
+    
+    audio.addEventListener('error', (e) => {
+        console.log('音频加载失败:', e);
+        showNotification('音乐文件加载失败，请检查文件是否存在');
+    });
+}
+
+// 调节音量
+function adjustVolume(volume) {
+    const audio = document.getElementById('background-music');
+    audio.volume = parseFloat(volume);
+    
+    if (volume == 0) {
+        showNotification('音量已静音 🔇');
+    } else if (volume < 0.3) {
+        showNotification('音量：低 🔉');
+    } else if (volume < 0.7) {
+        showNotification('音量：中 🔊');
+    } else {
+        showNotification('音量：高 🔊');
+    }
 }
 
 // 更新音乐按钮状态
