@@ -529,11 +529,15 @@ let currentSlide = 0;
 let slides = [];
 let autoPlayInterval = null;
 let isAutoPlaying = true;
+let displayMode = 'contain'; // 'contain' 或 'fill'
 
 // 初始化图片轮播
 function initPhotoCarousel() {
     slides = document.querySelectorAll('.carousel-slide');
     if (slides.length === 0) return;
+    
+    // 设置初始显示模式
+    updateDisplayMode();
     
     // 开始自动播放
     startAutoPlay();
@@ -726,4 +730,29 @@ function addTouchSupport() {
         startX = 0;
         startY = 0;
     });
+}
+
+// 切换图片显示模式
+function toggleDisplayMode() {
+    displayMode = displayMode === 'contain' ? 'fill' : 'contain';
+    updateDisplayMode();
+    
+    const modeText = displayMode === 'contain' ? '适应模式' : '填充模式';
+    showNotification(`已切换到${modeText} 🖼️`);
+}
+
+// 更新显示模式
+function updateDisplayMode() {
+    slides = document.querySelectorAll('.carousel-slide');
+    slides.forEach(slide => {
+        slide.classList.remove('contain-mode', 'fill-mode');
+        slide.classList.add(`${displayMode}-mode`);
+    });
+    
+    // 更新按钮图标
+    const btn = document.getElementById('display-mode-btn');
+    if (btn) {
+        btn.textContent = displayMode === 'contain' ? '🖼️' : '🔲';
+        btn.title = displayMode === 'contain' ? '切换到填充模式' : '切换到适应模式';
+    }
 }
