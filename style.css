@@ -842,6 +842,34 @@ body {
     text-decoration: underline;
 }
 
+/* 云端照片特殊标识 */
+.cloud-photo .slide-caption::after {
+    content: ' ☁️';
+    color: #4A90E2;
+}
+
+.cloud-photo.thumbnail {
+    border: 2px solid #4A90E2;
+    position: relative;
+}
+
+.cloud-photo.thumbnail::after {
+    content: '☁️';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #4A90E2;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+
 /* 滑入动画 */
 @keyframes slideIn {
     from {

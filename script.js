@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     updateMeetingDateDisplay(); // 确保相遇日期正确显示
     checkAudioStatus(); // 检查音频加载状态
     initPhotoCarousel(); // 初始化图片轮播
+    
+    // 延迟加载云端照片
+    setTimeout(() => {
+        loadCloudPhotos();
+    }, 2000);
+    
     // 使用固定内容，确保所有访问者看到相同内容
 });
 
@@ -643,21 +649,50 @@ function handleMultiplePhotos(event) {
     const files = event.target.files;
     if (files.length === 0) return;
     
+    // 显示上传进度
+    showNotification('正在上传照片到云端... ☁️');
+    
     let successCount = 0;
+    let totalFiles = 0;
+    
+    // 统计有效图片文件数量
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith('image/')) {
+            totalFiles++;
+        }
+    }
+    
+    if (totalFiles === 0) {
+        showNotification('请选择有效的图片文件！');
+        event.target.value = '';
+        return;
+    }
     
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                addNewSlide(e.target.result, `新添加的照片 ${successCount + 1}`);
-                successCount++;
-                
-                if (successCount === files.length) {
-                    showNotification(`成功添加 ${successCount} 张照片！📷`);
-                }
-            };
-            reader.readAsDataURL(file);
+            uploadToCloud(file)
+                .then(result => {
+                    if (result.success) {
+                        addNewSlideFromCloud(result.imageUrl, result.caption);
+                        successCount++;
+                        
+                        // 更新进度
+                        showNotification(`上传进度: ${successCount}/${totalFiles} 📷`);
+                        
+                        if (successCount === totalFiles) {
+                            showNotification(`成功上传 ${successCount} 张照片到云端！🎉`);
+                            // 重新加载云端照片
+                            setTimeout(loadCloudPhotos, 1000);
+                        }
+                    } else {
+                        showNotification(`照片上传失败: ${result.error} ❌`);
+                    }
+                })
+                .catch(error => {
+                    console.error('上传错误:', error);
+                    showNotification(`上传失败: ${error.message} ❌`);
+                });
         }
     }
     
@@ -829,4 +864,120 @@ function addNewSlideFromFile(imageSrc, caption, index) {
     newSlide.classList.add(`${displayMode}-mode`);
     
     console.log(`自动发现并添加照片: ${imageSrc}`);
+}
+
+// ===========================================
+// 云端照片管理功能
+// ===========================================
+
+// 上传照片到云端
+async function uploadToCloud(file) {
+    try {
+        // 将文件转换为base64
+        const base64 = await fileToBase64(file);
+        
+        // 发送到Netlify Function
+        const response = await fetch('/api/upload-photo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                imageData: base64,
+                caption: `美好回忆 ${new Date().toLocaleDateString('zh-CN')}`,
+            }),
+        });
+        
+        const result = await response.json();
+        return result;
+        
+    } catch (error) {
+        console.error('云端上传失败:', error);
+        return {
+            success: false,
+            error: error.message,
+        };
+    }
+}
+
+// 从云端加载所有照片
+async function loadCloudPhotos() {
+    try {
+        const response = await fetch('/api/get-photos');
+        const result = await response.json();
+        
+        if (result.success && result.photos.length > 0) {
+            // 清除现有的云端照片（保留本地照片）
+            clearCloudPhotos();
+            
+            // 添加云端照片
+            result.photos.forEach((photo, index) => {
+                const slideIndex = slides.length;
+                addNewSlideFromCloud(photo.url, photo.caption, slideIndex);
+            });
+            
+            showNotification(`从云端加载了 ${result.photos.length} 张照片 ☁️`);
+        }
+        
+    } catch (error) {
+        console.error('加载云端照片失败:', error);
+    }
+}
+
+// 文件转base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// 从云端URL添加新幻灯片
+function addNewSlideFromCloud(imageUrl, caption, index = null) {
+    const carouselTrack = document.getElementById('carousel-track');
+    const thumbnailNav = document.querySelector('.thumbnail-nav');
+    const indicators = document.querySelector('.carousel-indicators');
+    
+    const slideIndex = index !== null ? index : slides.length;
+    
+    // 创建新幻灯片
+    const newSlide = document.createElement('div');
+    newSlide.className = 'carousel-slide cloud-photo';
+    newSlide.innerHTML = `
+        <img src="${imageUrl}" alt="${caption}" />
+        <div class="slide-caption">${caption} ☁️</div>
+    `;
+    carouselTrack.appendChild(newSlide);
+    
+    // 创建新缩略图
+    const newThumbnail = document.createElement('div');
+    newThumbnail.className = 'thumbnail cloud-photo';
+    newThumbnail.onclick = () => goToSlide(slideIndex);
+    newThumbnail.innerHTML = `<img src="${imageUrl}" alt="缩略图" />`;
+    thumbnailNav.appendChild(newThumbnail);
+    
+    // 创建新指示器
+    const newIndicator = document.createElement('span');
+    newIndicator.className = 'indicator cloud-photo';
+    newIndicator.onclick = () => goToSlide(slideIndex);
+    indicators.appendChild(newIndicator);
+    
+    // 更新slides数组
+    slides = document.querySelectorAll('.carousel-slide');
+    
+    // 应用当前显示模式
+    newSlide.classList.add(`${displayMode}-mode`);
+}
+
+// 清除云端照片
+function clearCloudPhotos() {
+    // 移除所有标记为云端照片的元素
+    document.querySelectorAll('.cloud-photo').forEach(element => {
+        element.remove();
+    });
+    
+    // 重新获取slides
+    slides = document.querySelectorAll('.carousel-slide');
 }

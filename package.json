@@ -1,0 +1,29 @@
+{
+  "name": "love-memory",
+  "version": "1.0.0",
+  "description": "爱情纪念册 - 支持云端照片存储",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "netlify deploy --prod"
+  },
+  "keywords": [
+    "love",
+    "memory",
+    "photo-gallery",
+    "netlify",
+    "cloudinary"
+  ],
+  "author": "您的名字",
+  "license": "MIT",
+  "dependencies": {
+    "cloudinary": "^1.41.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
