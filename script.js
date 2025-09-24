@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     startLoveCounter();
     updateMeetingDateDisplay(); // 确保相遇日期正确显示
     checkAudioStatus(); // 检查音频加载状态
+    initPhotoCarousel(); // 初始化图片轮播
     // 使用固定内容，确保所有访问者看到相同内容
 });
 
@@ -519,3 +520,210 @@ function addScrollAnimations() {
 window.addEventListener('load', function() {
     setTimeout(addScrollAnimations, 500);
 });
+
+// ===========================================
+// 图片轮播功能
+// ===========================================
+
+let currentSlide = 0;
+let slides = [];
+let autoPlayInterval = null;
+let isAutoPlaying = true;
+
+// 初始化图片轮播
+function initPhotoCarousel() {
+    slides = document.querySelectorAll('.carousel-slide');
+    if (slides.length === 0) return;
+    
+    // 开始自动播放
+    startAutoPlay();
+    
+    // 添加键盘导航
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            previousSlide();
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
+        } else if (e.key === ' ') {
+            e.preventDefault();
+            toggleAutoPlay();
+        }
+    });
+    
+    // 添加触摸滑动支持
+    addTouchSupport();
+}
+
+// 显示指定幻灯片
+function goToSlide(index) {
+    if (index < 0 || index >= slides.length) return;
+    
+    // 移除当前活动状态
+    slides[currentSlide].classList.remove('active');
+    document.querySelectorAll('.thumbnail')[currentSlide].classList.remove('active');
+    document.querySelectorAll('.indicator')[currentSlide].classList.remove('active');
+    
+    // 设置新的活动状态
+    currentSlide = index;
+    slides[currentSlide].classList.add('active');
+    document.querySelectorAll('.thumbnail')[currentSlide].classList.add('active');
+    document.querySelectorAll('.indicator')[currentSlide].classList.add('active');
+    
+    // 添加切换动画
+    slides[currentSlide].style.animation = 'slideIn 0.5s ease-in-out';
+    setTimeout(() => {
+        slides[currentSlide].style.animation = '';
+    }, 500);
+}
+
+// 上一张
+function previousSlide() {
+    const newIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+    goToSlide(newIndex);
+}
+
+// 下一张  
+function nextSlide() {
+    const newIndex = currentSlide === slides.length - 1 ? 0 : currentSlide + 1;
+    goToSlide(newIndex);
+}
+
+// 开始自动播放
+function startAutoPlay() {
+    if (autoPlayInterval) clearInterval(autoPlayInterval);
+    autoPlayInterval = setInterval(nextSlide, 4000); // 每4秒切换一次
+    isAutoPlaying = true;
+    updateAutoPlayButton();
+}
+
+// 停止自动播放
+function stopAutoPlay() {
+    if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+    }
+    isAutoPlaying = false;
+    updateAutoPlayButton();
+}
+
+// 切换自动播放
+function toggleAutoPlay() {
+    if (isAutoPlaying) {
+        stopAutoPlay();
+        showNotification('自动播放已暂停 ⏸️');
+    } else {
+        startAutoPlay();
+        showNotification('自动播放已开启 ▶️');
+    }
+}
+
+// 更新自动播放按钮
+function updateAutoPlayButton() {
+    const btn = document.getElementById('auto-play-btn');
+    if (btn) {
+        btn.textContent = isAutoPlaying ? '⏸️' : '▶️';
+        btn.title = isAutoPlaying ? '暂停自动播放' : '开始自动播放';
+    }
+}
+
+// 上传更多照片
+function uploadMorePhotos() {
+    document.getElementById('photo-input').click();
+}
+
+// 处理多张照片上传
+function handleMultiplePhotos(event) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    
+    let successCount = 0;
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                addNewSlide(e.target.result, `新添加的照片 ${successCount + 1}`);
+                successCount++;
+                
+                if (successCount === files.length) {
+                    showNotification(`成功添加 ${successCount} 张照片！📷`);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // 清空文件输入
+    event.target.value = '';
+}
+
+// 添加新的幻灯片
+function addNewSlide(imageSrc, caption) {
+    const carouselTrack = document.getElementById('carousel-track');
+    const thumbnailNav = document.querySelector('.thumbnail-nav');
+    const indicators = document.querySelector('.carousel-indicators');
+    
+    // 创建新幻灯片
+    const newSlide = document.createElement('div');
+    newSlide.className = 'carousel-slide';
+    newSlide.innerHTML = `
+        <img src="${imageSrc}" alt="${caption}" />
+        <div class="slide-caption">${caption}</div>
+    `;
+    carouselTrack.appendChild(newSlide);
+    
+    // 创建新缩略图
+    const newThumbnail = document.createElement('div');
+    newThumbnail.className = 'thumbnail';
+    newThumbnail.onclick = () => goToSlide(slides.length);
+    newThumbnail.innerHTML = `<img src="${imageSrc}" alt="缩略图" />`;
+    thumbnailNav.appendChild(newThumbnail);
+    
+    // 创建新指示器
+    const newIndicator = document.createElement('span');
+    newIndicator.className = 'indicator';
+    newIndicator.onclick = () => goToSlide(slides.length);
+    indicators.appendChild(newIndicator);
+    
+    // 更新slides数组
+    slides = document.querySelectorAll('.carousel-slide');
+}
+
+// 添加触摸滑动支持
+function addTouchSupport() {
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (!carouselContainer) return;
+    
+    let startX = 0;
+    let startY = 0;
+    
+    carouselContainer.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    });
+    
+    carouselContainer.addEventListener('touchend', function(e) {
+        if (!startX || !startY) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        // 只有水平滑动距离大于垂直滑动距离时才触发
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (Math.abs(diffX) > 50) { // 滑动距离阈值
+                if (diffX > 0) {
+                    nextSlide(); // 向左滑动，显示下一张
+                } else {
+                    previousSlide(); // 向右滑动，显示上一张
+                }
+            }
+        }
+        
+        startX = 0;
+        startY = 0;
+    });
+}

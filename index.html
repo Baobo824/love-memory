@@ -81,23 +81,73 @@
             <div class="memory-card">
                 <div class="memory-icon">📸</div>
                 <h2>美好回忆</h2>
-                <div class="photo-gallery">
-                    <div class="photo-item">
-                        <img src="111.jpg" alt="美好回忆照片1" />
+                
+                <!-- 主要图片轮播展示 -->
+                <div class="photo-carousel">
+                    <div class="carousel-container">
+                        <div class="carousel-track" id="carousel-track">
+                            <div class="carousel-slide active">
+                                <img src="111.jpg" alt="美好回忆照片1" />
+                                <div class="slide-caption">第一次见面 💕</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="222.jpg" alt="美好回忆照片2" />
+                                <div class="slide-caption">一起旅行 🌍</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="333.jpg" alt="美好回忆照片3" />
+                                <div class="slide-caption">浪漫时光 🌹</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="444.jpg" alt="美好回忆照片4" />
+                                <div class="slide-caption">甜蜜瞬间 💖</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 导航按钮 -->
+                        <button class="carousel-btn prev-btn" onclick="previousSlide()">❮</button>
+                        <button class="carousel-btn next-btn" onclick="nextSlide()">❯</button>
+                        
+                        <!-- 自动播放控制 -->
+                        <button class="auto-play-btn" onclick="toggleAutoPlay()" id="auto-play-btn">⏸️</button>
                     </div>
-                    <div class="photo-item">
-                        <img src="222.jpg" alt="美好回忆照片2" />
+                    
+                    <!-- 缩略图导航 -->
+                    <div class="thumbnail-nav">
+                        <div class="thumbnail active" onclick="goToSlide(0)">
+                            <img src="111.jpg" alt="缩略图1" />
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(1)">
+                            <img src="222.jpg" alt="缩略图2" />
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(2)">
+                            <img src="333.jpg" alt="缩略图3" />
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(3)">
+                            <img src="444.jpg" alt="缩略图4" />
+                        </div>
                     </div>
-                    <div class="photo-item">
-                        <img src="333.jpg" alt="美好回忆照片3" />
-                    </div>
-                    <div class="photo-item">
-                        <img src="444.jpg" alt="美好回忆照片4" />
+                    
+                    <!-- 指示器 -->
+                    <div class="carousel-indicators">
+                        <span class="indicator active" onclick="goToSlide(0)"></span>
+                        <span class="indicator" onclick="goToSlide(1)"></span>
+                        <span class="indicator" onclick="goToSlide(2)"></span>
+                        <span class="indicator" onclick="goToSlide(3)"></span>
                     </div>
                 </div>
-                <p class="memory-text" style="text-align: center; margin-top: 20px;">
-                    每一张照片都记录着我们的甜蜜时光 💕
-                </p>
+                
+                <!-- 上传更多照片功能 -->
+                <div class="photo-upload-section">
+                    <p class="memory-text">
+                        每一张照片都记录着我们的甜蜜时光 💕<br>
+                        <small>点击下方按钮添加更多美好回忆</small>
+                    </p>
+                    <button class="upload-photo-btn" onclick="uploadMorePhotos()">
+                        📷 添加更多照片
+                    </button>
+                    <input type="file" id="photo-input" accept="image/*" multiple style="display: none;" onchange="handleMultiplePhotos(event)">
+                </div>
             </div>
         </section>
 
