@@ -536,6 +536,9 @@ function initPhotoCarousel() {
     slides = document.querySelectorAll('.carousel-slide');
     if (slides.length === 0) return;
     
+    // 检测并添加项目中的额外照片
+    detectAndAddPhotos();
+    
     // 设置初始显示模式
     updateDisplayMode();
     
@@ -755,4 +758,75 @@ function updateDisplayMode() {
         btn.textContent = displayMode === 'contain' ? '🖼️' : '🔲';
         btn.title = displayMode === 'contain' ? '切换到填充模式' : '切换到适应模式';
     }
+}
+
+// 自动检测项目中的额外照片
+function detectAndAddPhotos() {
+    const commonPhotoNames = [
+        '555.jpg', '666.jpg', '777.jpg', '888.jpg', '999.jpg',
+        'photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg', 'photo5.jpg',
+        'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg',
+        'pic1.jpg', 'pic2.jpg', 'pic3.jpg', 'pic4.jpg', 'pic5.jpg'
+    ];
+    
+    let foundPhotos = 0;
+    const currentSlideCount = slides.length;
+    
+    commonPhotoNames.forEach((photoName, index) => {
+        checkIfImageExists(photoName)
+            .then(exists => {
+                if (exists) {
+                    const slideIndex = currentSlideCount + foundPhotos;
+                    addNewSlideFromFile(photoName, `美好回忆 ${slideIndex + 1}`, slideIndex);
+                    foundPhotos++;
+                }
+            });
+    });
+}
+
+// 检查图片是否存在
+function checkIfImageExists(imageSrc) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = imageSrc;
+    });
+}
+
+// 从文件添加新幻灯片
+function addNewSlideFromFile(imageSrc, caption, index) {
+    const carouselTrack = document.getElementById('carousel-track');
+    const thumbnailNav = document.querySelector('.thumbnail-nav');
+    const indicators = document.querySelector('.carousel-indicators');
+    
+    // 创建新幻灯片
+    const newSlide = document.createElement('div');
+    newSlide.className = 'carousel-slide';
+    newSlide.innerHTML = `
+        <img src="${imageSrc}" alt="${caption}" />
+        <div class="slide-caption">${caption}</div>
+    `;
+    carouselTrack.appendChild(newSlide);
+    
+    // 创建新缩略图
+    const newThumbnail = document.createElement('div');
+    newThumbnail.className = 'thumbnail';
+    newThumbnail.onclick = () => goToSlide(index);
+    newThumbnail.innerHTML = `<img src="${imageSrc}" alt="缩略图" />`;
+    thumbnailNav.appendChild(newThumbnail);
+    
+    // 创建新指示器
+    const newIndicator = document.createElement('span');
+    newIndicator.className = 'indicator';
+    newIndicator.onclick = () => goToSlide(index);
+    indicators.appendChild(newIndicator);
+    
+    // 更新slides数组
+    slides = document.querySelectorAll('.carousel-slide');
+    
+    // 应用当前显示模式
+    newSlide.classList.add(`${displayMode}-mode`);
+    
+    console.log(`自动发现并添加照片: ${imageSrc}`);
 }

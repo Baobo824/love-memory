@@ -821,6 +821,27 @@ body {
     box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
+.upload-note {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.upload-note a {
+    color: #ff6b6b;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.upload-note a:hover {
+    text-decoration: underline;
+}
+
 /* 滑入动画 */
 @keyframes slideIn {
     from {
