@@ -38,7 +38,7 @@
                 <h2>初次相遇</h2>
                 <div class="date-display" id="meeting-date">
                     <span class="date-label">那一天</span>
-                    <span class="date-value" id="date-value">点击下方按钮设置相遇日期</span>
+                    <span class="date-value" id="date-value">2025年2月7日 星期五</span>
                 </div>
                 <p class="memory-text">
                     那一刻，时间仿佛停止了...<br>
@@ -46,7 +46,6 @@
                     从此，我的世界有了色彩。<br>
                     <em>从那一天开始，我们的故事就这样开始了...</em>
                 </p>
-                <button class="set-date-btn" onclick="setMeetingDate()">设置相遇日期</button>
             </div>
         </section>
 
@@ -83,20 +82,22 @@
                 <div class="memory-icon">📸</div>
                 <h2>美好回忆</h2>
                 <div class="photo-gallery">
-                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
-                        <span>📷<br>点击添加照片</span>
+                    <div class="photo-item">
+                        <img src="111.jpg" alt="美好回忆照片1" />
                     </div>
-                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
-                        <span>📷<br>点击添加照片</span>
+                    <div class="photo-item">
+                        <img src="222.jpg" alt="美好回忆照片2" />
                     </div>
-                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
-                        <span>📷<br>点击添加照片</span>
+                    <div class="photo-item">
+                        <img src="333.jpg" alt="美好回忆照片3" />
                     </div>
-                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
-                        <span>📷<br>点击添加照片</span>
+                    <div class="photo-item">
+                        <img src="444.jpg" alt="美好回忆照片4" />
                     </div>
                 </div>
-                <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+                <p class="memory-text" style="text-align: center; margin-top: 20px;">
+                    每一张照片都记录着我们的甜蜜时光 💕
+                </p>
             </div>
         </section>
 

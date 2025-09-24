@@ -341,16 +341,38 @@ body {
     border-radius: 12px;
 }
 
-/* 旅游区域 */
-.travel-container {
+/* 照片项目样式 */
+.photo-item {
+    aspect-ratio: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.photo-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.photo-item img:hover {
+    transform: scale(1.1);
+}
+
+/* 誓言区域 */
+.promise-box {
     margin: 30px 0;
 }
 
-.travel-input-box {
-    margin-bottom: 20px;
-}
-
-.travel-input-box textarea {
+.promise-box textarea {
     width: 100%;
     min-height: 150px;
     padding: 20px;
@@ -363,14 +385,14 @@ body {
     transition: border-color 0.3s ease;
 }
 
-.travel-input-box textarea:focus {
+.promise-box textarea:focus {
     outline: none;
-    border-color: #20b2aa;
-    box-shadow: 0 0 10px rgba(32, 178, 170, 0.3);
+    border-color: #d63384;
+    box-shadow: 0 0 10px rgba(214, 51, 132, 0.3);
 }
 
-.travel-input-box button {
-    background: linear-gradient(45deg, #20b2aa, #40e0d0);
+.promise-box button {
+    background: linear-gradient(45deg, #d63384, #e91e63);
     color: white;
     border: none;
     padding: 12px 30px;
@@ -381,67 +403,27 @@ body {
     transition: all 0.3s ease;
 }
 
-.travel-input-box button:hover {
+.promise-box button:hover {
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(32, 178, 170, 0.4);
+    box-shadow: 0 5px 15px rgba(214, 51, 132, 0.4);
 }
 
-.saved-travel {
-    background: linear-gradient(45deg, #74b9ff, #0984e3);
+.saved-promise {
+    background: linear-gradient(45deg, #74b9ff, #a29bfe);
     padding: 20px;
     border-radius: 15px;
     margin-top: 20px;
     color: white;
 }
 
-.saved-travel p {
+.saved-promise p {
     font-size: 1.1rem;
     line-height: 1.6;
     margin-bottom: 10px;
 }
 
-.saved-travel small {
+.saved-promise small {
     opacity: 0.8;
-}
-
-.travel-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.travel-stat-item {
-    background: linear-gradient(45deg, #00b894, #00cec9);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.travel-stat-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 184, 148, 0.3);
-}
-
-.stat-icon {
-    display: block;
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.stat-label {
-    display: block;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    opacity: 0.9;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.1rem;
-    font-weight: bold;
 }
 
 /* 互动爱心区域 */

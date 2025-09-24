@@ -1,5 +1,5 @@
 // 全局变量
-let meetingDate = null;
+let meetingDate = new Date('2025-02-07'); // 固定的相遇日期
 let currentPhotoTarget = null;
 let isPlayingMusic = false;
 
@@ -7,7 +7,7 @@ let isPlayingMusic = false;
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
     startLoveCounter();
-    loadSavedData();
+    // 不再加载本地存储的数据，使用固定内容
 });
 
 // 初始化页面
