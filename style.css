@@ -309,9 +309,12 @@ body {
 /* 照片画廊 */
 .photo-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     margin: 30px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .photo-placeholder {
@@ -348,23 +351,48 @@ body {
     overflow: hidden;
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid #fff;
+    background: #fff;
+    position: relative;
 }
 
 .photo-item:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border-color: #ff6b6b;
 }
 
 .photo-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 15px;
-    transition: transform 0.3s ease;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    display: block;
 }
 
 .photo-item img:hover {
-    transform: scale(1.1);
+    transform: scale(1.02);
+}
+
+/* 照片加载失败时的样式 */
+.photo-item img[src=""] {
+    display: none;
+}
+
+.photo-item::before {
+    content: "📷";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: #ddd;
+    z-index: 1;
+}
+
+.photo-item:has(img) ::before {
+    display: none;
 }
 
 /* 誓言区域 */
@@ -525,8 +553,9 @@ body {
     }
     
     .photo-gallery {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 15px;
+        max-width: 100%;
     }
     
     .music-control {

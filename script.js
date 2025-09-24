@@ -95,7 +95,7 @@ function updateLoveCounter() {
 // 开始爱情计数器
 function startLoveCounter() {
     updateLoveCounter();
-    setInterval(updateLoveCounter, 60000); // 每分钟更新一次
+    setInterval(updateLoveCounter, 1000); // 每秒更新一次，立即看到变化
 }
 
 // 数字滚动动画
