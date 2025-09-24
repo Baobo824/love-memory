@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云端功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 云端功能测试工具</h1>
+    
+    <div class="test-container">
+        <h2>📡 测试API连接</h2>
+        <button class="test-button" onclick="testGetPhotos()">测试获取照片API</button>
+        <button class="test-button" onclick="testNetlifyStatus()">测试Netlify状态</button>
+        <div id="api-result" class="result"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>🔑 环境变量检查</h2>
+        <p>检查Netlify环境变量是否正确配置</p>
+        <button class="test-button" onclick="checkEnvironment()">检查环境配置</button>
+        <div id="env-result" class="result"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📸 测试上传功能</h2>
+        <input type="file" id="test-file" accept="image/*">
+        <button class="test-button" onclick="testUpload()">测试上传</button>
+        <div id="upload-result" class="result"></div>
+    </div>
+
+    <script>
+        // 测试获取照片API
+        async function testGetPhotos() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.textContent = '正在测试...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch('/api/get-photos');
+                const result = await response.json();
+                
+                resultDiv.textContent = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    result: result
+                }, null, 2);
+                
+                resultDiv.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultDiv.textContent = '错误: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 测试Netlify状态
+        async function testNetlifyStatus() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.textContent = '正在检查Netlify Functions...';
+            
+            try {
+                // 测试函数是否存在
+                const response = await fetch('/.netlify/functions/get-photos');
+                const result = await response.text();
+                
+                resultDiv.textContent = `Netlify Functions状态:
+状态码: ${response.status}
+响应: ${result}`;
+                
+                resultDiv.className = 'result ' + (response.status === 200 ? 'success' : 'error');
+            } catch (error) {
+                resultDiv.textContent = 'Netlify Functions错误: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 检查环境配置
+        function checkEnvironment() {
+            const resultDiv = document.getElementById('env-result');
+            resultDiv.textContent = `环境检查清单:
+            
+1. 检查Netlify控制台中的环境变量:
+   - CLOUDINARY_CLOUD_NAME ✓
+   - CLOUDINARY_API_KEY ✓  
+   - CLOUDINARY_API_SECRET ✓
+   
+2. 确认Functions已部署:
+   - upload-photo.js
+   - get-photos.js
+   
+3. 检查netlify.toml配置文件`;
+            resultDiv.className = 'result';
+        }
+        
+        // 测试上传
+        async function testUpload() {
+            const fileInput = document.getElementById('test-file');
+            const resultDiv = document.getElementById('upload-result');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.textContent = '请先选择一个图片文件';
+                resultDiv.className = 'result error';
+                return;
+            }
+            
+            resultDiv.textContent = '正在测试上传...';
+            resultDiv.className = 'result';
+            
+            try {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    try {
+                        const response = await fetch('/api/upload-photo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                imageData: e.target.result,
+                                caption: '测试图片'
+                            }),
+                        });
+                        
+                        const result = await response.json();
+                        
+                        resultDiv.textContent = JSON.stringify({
+                            status: response.status,
+                            result: result
+                        }, null, 2);
+                        
+                        resultDiv.className = response.ok ? 'result success' : 'result error';
+                    } catch (error) {
+                        resultDiv.textContent = '上传错误: ' + error.message;
+                        resultDiv.className = 'result error';
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            } catch (error) {
+                resultDiv.textContent = '文件读取错误: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>

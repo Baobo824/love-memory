@@ -909,7 +909,14 @@ async function uploadToCloud(file) {
 async function loadCloudPhotos() {
     try {
         console.log('正在从云端加载照片...');
-        const response = await fetch('/api/get-photos');
+        // 尝试不同的API路径
+        let response;
+        try {
+            response = await fetch('/api/get-photos');
+        } catch (e) {
+            console.log('尝试备用路径...');
+            response = await fetch('/.netlify/functions/get-photos');
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
