@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的爱情纪念册 💕</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景爱心动画 -->
+    <div class="hearts-background">
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <h1 class="main-title">我们的爱情故事</h1>
+            <p class="subtitle">Love Story Memorial</p>
+            <div class="love-birds">
+                🐦💕🐦
+            </div>
+        </header>
+
+        <!-- 相遇时光 -->
+        <section class="memory-section" id="first-meeting">
+            <div class="memory-card">
+                <div class="memory-icon">💫</div>
+                <h2>初次相遇</h2>
+                <div class="date-display" id="meeting-date" style="display: none;">
+                    <span class="date-label">那一天</span>
+                    <span class="date-value" id="date-value">等待设置...</span>
+                </div>
+                <p class="memory-text">
+                    那一刻，时间仿佛停止了...<br>
+                    你的笑容如春天的花朵般绽放，<br>
+                    从此，我的世界有了色彩。<br>
+                    <em>从那一天开始，我们的故事就这样开始了...</em>
+                </p>
+            </div>
+        </section>
+
+        <!-- 在一起的日子 -->
+        <section class="memory-section" id="together-days">
+            <div class="memory-card">
+                <div class="memory-icon">💕</div>
+                <h2>在一起的日子</h2>
+                <div class="love-counter">
+                    <div class="counter-item">
+                        <span class="counter-number" id="days-count">0</span>
+                        <span class="counter-label">天</span>
+                    </div>
+                    <div class="counter-item">
+                        <span class="counter-number" id="hours-count">0</span>
+                        <span class="counter-label">小时</span>
+                    </div>
+                    <div class="counter-item">
+                        <span class="counter-number" id="minutes-count">0</span>
+                        <span class="counter-label">分钟</span>
+                    </div>
+                </div>
+                <p class="memory-text">
+                    每一天都是新的开始，<br>
+                    每一刻都值得珍藏。<br>
+                    我们的爱情在时间中愈发深厚。
+                </p>
+            </div>
+        </section>
+
+        <!-- 美好回忆 -->
+        <section class="memory-section" id="memories">
+            <div class="memory-card">
+                <div class="memory-icon">📸</div>
+                <h2>美好回忆</h2>
+                <div class="photo-gallery">
+                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
+                        <span>📷<br>点击添加照片</span>
+                    </div>
+                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
+                        <span>📷<br>点击添加照片</span>
+                    </div>
+                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
+                        <span>📷<br>点击添加照片</span>
+                    </div>
+                    <div class="photo-placeholder" onclick="uploadPhoto(this)">
+                        <span>📷<br>点击添加照片</span>
+                    </div>
+                </div>
+                <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+            </div>
+        </section>
+
+        <!-- 旅游计划 -->
+        <section class="memory-section" id="travel-plans">
+            <div class="memory-card">
+                <div class="memory-icon">🌍</div>
+                <h2>我们的旅游足迹</h2>
+                <div class="travel-container">
+                    <div class="travel-input-box">
+                        <textarea id="travel-text" placeholder="记录你们去过的地方，或者计划要去的地方..." maxlength="500"></textarea>
+                        <button onclick="saveTravelPlan()">保存旅游记录</button>
+                    </div>
+                    <div class="saved-travel" id="saved-travel" style="display: none;">
+                        <p id="travel-display"></p>
+                        <small>记录于 <span id="travel-date"></span></small>
+                    </div>
+                </div>
+                <div class="travel-stats">
+                    <div class="travel-stat-item">
+                        <span class="stat-icon">🎒</span>
+                        <span class="stat-label">一起旅行</span>
+                        <span class="stat-value" id="trip-count">记录你们的足迹</span>
+                    </div>
+                    <div class="travel-stat-item">
+                        <span class="stat-icon">📍</span>
+                        <span class="stat-label">下个目的地</span>
+                        <span class="stat-value">世界那么大，一起去看看</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 互动爱心 -->
+        <section class="memory-section" id="interactive-heart">
+            <div class="memory-card">
+                <div class="memory-icon">💖</div>
+                <h2>点击送给你爱心</h2>
+                <div class="heart-click-area" onclick="createHeartBurst(event)">
+                    <div class="big-heart">💗</div>
+                    <p>点击这里，送你满屏爱心~</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 背景音乐控制 -->
+        <div class="music-control">
+            <button id="music-btn" onclick="toggleMusic()">🎵</button>
+            <span>背景音乐</span>
+        </div>
+    </div>
+
+    <!-- 隐藏的音频元素 -->
+    <audio id="background-music" loop>
+        <source src="https://www.soundjay.com/misc/sounds/romantic-music.mp3" type="audio/mpeg">
+        <!-- 备用：使用本地音频文件 -->
+        <!-- <source src="romantic-music.mp3" type="audio/mpeg"> -->
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
