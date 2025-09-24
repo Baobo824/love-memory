@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
         loadCloudPhotos();
     }, 2000);
     
+    // 定期同步云端照片（每30秒检查一次）
+    setInterval(() => {
+        loadCloudPhotos();
+    }, 30000);
+    
     // 使用固定内容，确保所有访问者看到相同内容
 });
 
@@ -903,24 +908,35 @@ async function uploadToCloud(file) {
 // 从云端加载所有照片
 async function loadCloudPhotos() {
     try {
+        console.log('正在从云端加载照片...');
         const response = await fetch('/api/get-photos');
-        const result = await response.json();
         
-        if (result.success && result.photos.length > 0) {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('云端照片响应:', result);
+        
+        if (result.success && result.photos && result.photos.length > 0) {
             // 清除现有的云端照片（保留本地照片）
             clearCloudPhotos();
             
             // 添加云端照片
             result.photos.forEach((photo, index) => {
-                const slideIndex = slides.length;
+                const slideIndex = document.querySelectorAll('.carousel-slide').length;
                 addNewSlideFromCloud(photo.url, photo.caption, slideIndex);
             });
             
+            console.log(`成功加载 ${result.photos.length} 张云端照片`);
             showNotification(`从云端加载了 ${result.photos.length} 张照片 ☁️`);
+        } else {
+            console.log('云端暂无照片或加载失败');
         }
         
     } catch (error) {
         console.error('加载云端照片失败:', error);
+        showNotification('加载云端照片失败，请检查网络连接 ⚠️');
     }
 }
 
@@ -980,4 +996,10 @@ function clearCloudPhotos() {
     
     // 重新获取slides
     slides = document.querySelectorAll('.carousel-slide');
+}
+
+// 手动刷新云端照片
+function refreshCloudPhotos() {
+    showNotification('正在刷新云端照片... 🔄');
+    loadCloudPhotos();
 }

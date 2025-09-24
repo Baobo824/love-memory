@@ -821,6 +821,25 @@ body {
     box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
+.refresh-photos-btn {
+    background: linear-gradient(45deg, #4A90E2, #67A3E8);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.refresh-photos-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+}
+
 .upload-note {
     margin-top: 15px;
     padding: 10px;
